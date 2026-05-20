@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXORA V3</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Orbitron',sans-serif;
+}
+
+body{
+background: radial-gradient(circle at top,#0b1020,#05060f);
+color:white;
+overflow:hidden;
+}
+
+/* ===== TOP BAR ===== */
+#topbar{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:55px;
+background:rgba(10,10,20,0.8);
+backdrop-filter:blur(10px);
+border-bottom:1px solid rgba(0,255,255,0.2);
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 20px;
+z-index:1000;
+}
+
+#logo{
+color:cyan;
+font-size:20px;
+font-weight:800;
+text-shadow:0 0 10px cyan;
+}
+
+#clock{
+color:white;
+font-size:14px;
+opacity:0.8;
+}
+
+/* ===== LAYOUT ===== */
+#container{
+display:flex;
+height:100vh;
+padding-top:55px;
+}
+
+/* ===== SIDEBAR ===== */
+#sidebar{
+width:240px;
+background:rgba(0,0,0,0.4);
+backdrop-filter:blur(10px);
+border-right:1px solid rgba(0,255,255,0.15);
+padding:15px;
+overflow:auto;
+}
+
+.btn{
+display:block;
+width:100%;
+margin:10px 0;
+padding:12px;
+border-radius:12px;
+border:1px solid rgba(0,255,255,0.3);
+background:rgba(255,255,255,0.03);
+color:white;
+cursor:pointer;
+transition:0.25s;
+text-align:left;
+font-size:14px;
+}
+
+.btn:hover{
+background:cyan;
+color:black;
+transform:scale(1.03);
+}
+
+/* ===== MAIN ===== */
+#main{
+flex:1;
+padding:20px;
+overflow:auto;
+}
+
+/* ===== CARDS ===== */
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:15px;
+}
+
+.card{
+background:rgba(255,255,255,0.04);
+border:1px solid rgba(0,255,255,0.15);
+border-radius:15px;
+padding:15px;
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+border-color:cyan;
+}
+
+.card button, .app-btn{
+margin-top:10px;
+padding:10px;
+border:none;
+border-radius:10px;
+background:cyan;
+cursor:pointer;
+font-weight:bold;
+color:black;
+}
+
+.card button:hover, .app-btn:hover{
+background:#00e5ff;
+}
+
+/* ===== VIEWS ===== */
+.view{display:none;}
+.view.active{display:block;}
+
+/* ===== APP WINDOW ===== */
+.app-window{
+background:rgba(0,0,0,0.6);
+border:1px solid rgba(0,255,255,0.2);
+border-radius:15px;
+overflow:hidden;
+margin-top:15px;
+}
+
+.app-header{
+background:rgba(0,255,255,0.1);
+padding:10px 15px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+border-bottom:1px solid rgba(0,255,255,0.2);
+}
+
+.app-header span{font-weight:600;}
+.app-header button{background:none;border:none;color:cyan;cursor:pointer;font-size:18px;}
+
+.app-content{height:500px;}
+.app-content iframe{width:100%;height:100%;border:none;}
+
+/* ===== GAMES ===== */
+canvas{
+background:black;
+border:1px solid cyan;
+border-radius:10px;
+}
+
+.game-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:15px;}
+
+/* ===== TOOLS ===== */
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:15px;}
+input, select{
+width:100%;
+padding:10px;
+margin:8px 0;
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(0,255,255,0.2);
+border-radius:8px;
+color:white;
+font-family:'JetBrains Mono',monospace;
+}
+input:focus{outline:none;border-color:cyan;}
+
+/* ===== TERMINAL ===== */
+#terminal{
+background:black;
+padding:15px;
+border-radius:12px;
+height:400px;
+overflow:auto;
+font-family:'JetBrains Mono',monospace;
+color:lime;
+font-size:13px;
+}
+
+::-webkit-scrollbar{width:8px;}
+::-webkit-scrollbar-thumb{background:cyan;border-radius:10px;}
+::-webkit-scrollbar-track{background:rgba(0,0,0,0.3);}
+</style>
+</head>
+
+<body>
+
+<div id="topbar">
+<div id="logo">NEXORA V3</div>
+<div id="clock"></div>
+</div>
+
+<div id="container">
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+<button class="btn" onclick="show('home')">🏠 Dashboard</button>
+<button class="btn" onclick="show('games')">🎮 Juegos</button>
+<button class="btn" onclick="show('store')">🛒 Store</button>
+<button class="btn" onclick="show('tools')">🧰 Tools</button>
+<button class="btn" onclick="show('terminal')">💻 Terminal</button>
+<button class="btn" onclick="toggleMusic()">🎵 Música</button>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+<!-- HOME -->
+<div id="home" class="view active">
+<h1>Bienvenido a NEXORA V3</h1>
+<p style="opacity:0.7;margin-bottom:20px;">Gaming Hub • Retro • Futuro • Tools</p>
+<div class="grid">
+<div class="card">Estado: <span style="color:lime;">ONLINE</span></div>
+<div class="card">Servidor: STABLE</div>
+<div class="card">Usuario: GUEST</div>
+<div class="card">FPS UI: 60</div>
+</div>
+</div>
+
+<!-- GAMES -->
+<div id="games" class="view">
+<h2>Juegos Integrados</h2>
+<br>
+<div class="game-grid">
+<div class="card">
+<h3>🐍 Snake</h3>
+<canvas id="snake" width="300" height="200"></canvas>
+<p style="font-size:12px;opacity:0.7;margin-top:5px;">Usa las flechas del teclado</p>
+</div>
+
+<div class="card">
+<h3>🎯 Aim Trainer</h3>
+<canvas id="aim" width="300" height="200"></canvas>
+<p id="aimScore">Score: 0</p>
+</div>
+
+<div class="card">
+<h3>🧠 Memory Game</h3>
+<div id="memory" style="display:grid;grid-template-columns:repeat(4,1fr);gap:5px;"></div>
+<p id="memoryScore">Intentos: 0</p>
+</div>
+</div>
+</div>
+
+<!-- STORE -->
+<div id="store" class="view">
+<h2>Game Store</h2>
+<br>
+<div class="grid">
+<div class="card">
+<h3>Friv Games</h3>
+<button onclick="openInApp('Friv Games','https://www.friv.com/')">Abrir en App</button>
+</div>
+<div class="card">
+<h3>Y8 Games</h3>
+<button onclick="openInApp('Y8 Games','https://www.y8.com/')">Abrir en App</button>
+</div>
+<div class="card">
+<h3>Retro Games</h3>
+<button onclick="openInApp('Retro Games','https://www.retrogames.cc/')">Abrir en App</button>
+</div>
+<div class="card">
+<h3>Classic Reload</h3>
+<button onclick="openInApp('Classic Reload','https://classicreload.com/')">Abrir en App</button>
+</div>
+<div class="card">
+<h3>Steam</h3>
+<button onclick="openInApp('Steam','https://store.steampowered.com/')">Abrir en App</button>
+</div>
+</div>
+<div id="appContainer"></div>
+</div>
+
+<!-- TOOLS -->
+<div id="tools" class="view">
+<h2>Tools</h2>
+<br>
+<div class="tool-grid">
+
+<div class="card">
+<h3>🧮 Calculadora Científica</h3>
+<input type="text" id="calcInput" placeholder="2+2*5" readonly>
+<div class="grid" style="grid-template-columns:repeat(4,1fr);gap:5px;margin-top:10px;">
+<button class="app-btn" onclick="calc('7')">7</button>
+<button class="app-btn" onclick="calc('8')">8</button>
+<button class="app-btn" onclick="calc('9')">9</button>
+<button class="app-btn" onclick="calc('/')">/</button>
+<button class="app-btn" onclick="calc('4')">4</button>
+<button class="app-btn" onclick="calc('5')">5</button>
+<button class="app-btn" onclick="calc('6')">6</button>
+<button class="app-btn" onclick="calc('*')">*</button>
+<button class="app-btn" onclick="calc('1')">1</button>
+<button class="app-btn" onclick="calc('2')">2</button>
+<button class="app-btn" onclick="calc('3')">3</button>
+<button class="app-btn" onclick="calc('-')">-</button>
+<button class="app-btn" onclick="calc('0')">0</button>
+<button class="app-btn" onclick="calc('.')">.</button>
+<button class="app-btn" onclick="calcResult()">=</button>
+<button class="app-btn" onclick="calc('+')">+</button>
+</div>
+<button class="app-btn" style="width:100%;margin-top:5px;" onclick="calcClear()">C</button>
+</div>
+
+<div class="card">
+<h3>📏 Conversor de Unidades</h3>
+<select id="convType" onchange="updateConv()">
+<option value="km-m">Kilómetros a Metros</option>
+<option value="m-km">Metros a Kilómetros</option>
+<option value="c-f">Celsius a Fahrenheit</option>
+<option value="f-c">Fahrenheit a Celsius</option>
+</select>
+<input type="number" id="convInput" placeholder="Ingresa valor" oninput="convert()">
+<input type="text" id="convOutput" placeholder="Resultado" readonly>
+</div>
+
+<div class="card">
+<h3>🔐 Generador de Contraseñas</h3>
+<input type="text" id="passOutput" readonly>
+<div style="display:flex;gap:5px;">
+<input type="number" id="passLen" value="12" min="4" max="32">
+<button class="app-btn" onclick="genPassword()">Generar</button>
+</div>
+</div>
+
+<div class="card">
+<h3>YouTube</h3>
+<button onclick="openInApp('YouTube','https://youtube.com')">Abrir en App</button>
+</div>
+
+<div class="card">
+<h3>Google</h3>
+<button onclick="openInApp('Google','https://google.com')">Abrir en App</button>
+</div>
+
+<div class="card">
+<h3>GitHub</h3>
+<button onclick="openInApp('GitHub','https://github.com')">Abrir en App</button>
+</div>
+
+</div>
+</div>
+
+<!-- TERMINAL -->
+<div id="terminal" class="view">
+> Nexora V3 boot sequence initialized<br>
+> Loading modules... OK<br>
+> Gaming core active<br>
+> UI engine stable<br>
+> Tools loaded: Calculator, Converter, Password Gen<br>
+> Welcome user<br>
+</div>
+
+</div>
+</div>
+
+<audio id="music" loop>
+<source src="https://files.catbox.moe/7xqk6e.mp3">
+</audio>
+
+<script>
+/* CLOCK */
+setInterval(()=>{
+document.getElementById("clock").innerText=new Date().
