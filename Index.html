@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXORA V3</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Orbitron',sans-serif;
+}
+
+body{
+background: radial-gradient(circle at top,#0b1020,#05060f);
+color:white;
+overflow:hidden;
+}
+
+/* ===== SCROLLBAR ESTILO ===== */
+::-webkit-scrollbar{
+width:8px;
+height:8px;
+}
+::-webkit-scrollbar-track{
+background:rgba(0,0,0,0.2);
+}
+::-webkit-scrollbar-thumb{
+background:cyan;
+border-radius:4px;
+}
+
+/* ===== TOP BAR ===== */
+#topbar{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:55px;
+background:rgba(10,10,20,0.8);
+backdrop-filter:blur(10px);
+border-bottom:1px solid rgba(0,255,255,0.2);
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 20px;
+z-index:1000;
+}
+
+#logo{
+color:cyan;
+font-size:20px;
+font-weight:800;
+text-shadow:0 0 10px cyan;
+}
+
+#clock{
+color:white;
+font-size:14px;
+opacity:0.8;
+}
+
+/* ===== LAYOUT ===== */
+#container{
+display:flex;
+height:100vh;
+padding-top:55px;
+}
+
+/* ===== SIDEBAR ===== */
+#sidebar{
+width:240px;
+background:rgba(0,0,0,0.4);
+backdrop-filter:blur(10px);
+border-right:1px solid rgba(0,255,255,0.15);
+padding:15px;
+overflow:auto;
+}
+
+.btn{
+display:block;
+width:100%;
+margin:10px 0;
+padding:12px;
+border-radius:12px;
+border:1px solid rgba(0,255,255,0.3);
+background:rgba(255,255,255,0.03);
+color:white;
+cursor:pointer;
+transition:0.25s;
+text-align:left;
+font-size:14px;
+}
+
+.btn:hover{
+background:cyan;
+color:black;
+transform:scale(1.03);
+box-shadow:0 0 15px rgba(0,255,255,0.5);
+}
+
+.btn.active{
+background:cyan;
+color:black;
+box-shadow:0 0 15px rgba(0,255,255,0.5);
+}
+
+/* ===== MAIN ===== */
+#main{
+flex:1;
+padding:20px;
+overflow:auto;
+height:calc(100vh - 55px);
+}
+
+/* ===== CARDS Y GRILLAS ===== */
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:15px;
+margin:15px 0;
+}
+
+.card{
+background:rgba(255,255,255,0.04);
+border:1px solid rgba(0,255,255,0.15);
+border-radius:15px;
+padding:18px;
+transition:0.3s;
+}
+
+.card:hover{
+transform:translateY(-5px);
+border-color:cyan;
+box-shadow:0 5px 20px rgba(0,255,255,0.15);
+}
+
+.card h3{
+margin-bottom:12px;
+color:cyan;
+font-size:16px;
+}
+
+.card p{
+opacity:0.7;
+margin-bottom:12px;
+font-size:13px;
+line-height:1.5;
+}
+
+.card button{
+margin-top:10px;
+padding:10px 15px;
+border:none;
+border-radius:10px;
+background:cyan;
+cursor:pointer;
+font-weight:bold;
+color:black;
+transition:0.2s;
+}
+
+.card button:hover{
+background:#00e5ff;
+box-shadow:0 0 10px cyan;
+}
+
+/* ===== VISTAS ===== */
+.view{display:none; animation:fadeIn 0.3s ease;}
+.view.active{display:block;}
+
+@keyframes fadeIn{
+from{opacity:0; transform:translateY(10px);}
+to{opacity:1; transform:translateY(0);}
+}
+
+/* ===== JUEGOS ===== */
+canvas{
+background:black;
+border:1px solid cyan;
+border-radius:10px;
+max-width:100%;
+}
+
+.game-area{
+text-align:center;
+}
+
+.game-stats{
+display:flex;
+justify-content:space-around;
+margin:10px 0;
+padding:10px;
+background:rgba(0,255,255,0.05);
+border-radius:10px;
+}
+
+/* ===== TIENDA Y ENLACES ===== */
+.store-item{
+padding:18px;
+border-radius:12px;
+border:1px solid rgba(255,255,255,0.1);
+margin-bottom:12px;
+background:rgba(0,0,0,0.3);
+transition:0.2s;
+cursor:pointer;
+}
+
+.store-item:hover{
+border-color:cyan;
+background:rgba(0,255,255,0.05);
+}
+
+.store-item h3{
+color:cyan;
+margin-bottom:8px;
+}
+
+.store-item p{
+opacity:0.6;
+font-size:13px;
+margin-bottom:10px;
+}
+
+/* ===== TERMINAL ===== */
+#terminal{
+background:black;
+padding:18px;
+border-radius:12px;
+height:400px;
+overflow:auto;
+font-family:'Courier New',monospace;
+color:lime;
+line-height:1.6;
+font-size:14px;
+}
+
+.terminal-input{
+margin-top:10px;
+display:flex;
+gap:8px;
+}
+
+.terminal-input input{
+flex:1;
+padding:10px;
+background:rgba(255,255,255,0.05);
+border:1px solid lime;
+color:lime;
+border-radius:8px;
+outline:none;
+}
+
+.terminal-input button{
+padding:10px 15px;
+background:lime;
+color:black;
+border:none;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
+}
+
+/* ===== VENTANA INTERNA ===== */
+#window-container{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.85);
+z-index:2000;
+display:none;
+}
+
+#window-header{
+background:rgba(10,10,20,0.9);
+border-bottom:1px solid cyan;
+padding:10px 15px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+}
+
+#window-header h3{
+color:cyan;
+font-size:16px;
+}
+
+#window-close{
+background:red;
+color:white;
+border:none;
+width:30px;
+height:30px;
+border-radius:50%;
+cursor:pointer;
+font-weight:bold;
+}
+
+#window-content{
+width:100%;
+height:calc(100% - 50px);
+border:none;
+background:white;
+}
+
+/* ===== CALCULADORA ===== */
+.calculator{
+max-width:350px;
+margin:20px auto;
+background:rgba(0,0,0,0.5);
+border:1px solid cyan;
+border-radius:15px;
+padding:20px;
+}
+
+.calc-display{
+width:100%;
+height:60px;
+background:rgba(0,255,255,0.1);
+border:1px solid cyan;
+border-radius:10px;
+color:white;
+font-size:24px;
+text-align:right;
+padding:10px;
+margin-bottom:15px;
+outline:none;
+}
+
+.calc-buttons{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:10px;
+}
+
+.calc-btn{
+padding:15px;
+border:none;
+border-radius:8px;
+font-size:16px;
+font-weight:bold;
+cursor:pointer;
+transition:0.2s;
+}
+
+.calc-btn.num{
+background:rgba(255,255,255,0.1);
+color:white;
+}
+
+.calc-btn.num:hover{
+background:rgba(255,255,255,0.2);
+}
+
+.calc-btn.op{
+background:cyan;
+color:black;
+}
+
+.calc-btn.op:hover{
+background:#00e5ff;
+}
+
+.calc-btn.eq{
+background:lime;
+color:black;
+grid-row:span 2;
+}
+
+.calc-btn.clr{
+background:red;
+color:white;
+grid-column:span 2;
+}
+
+/* ===== HERRAMIENTAS EXTRAS ===== */
+.tool-box{
+background:rgba(0,0,0,0.4);
+border:1px solid rgba(0,255,255,0.15);
+border-radius:15px;
+padding:20px;
+margin:15px 0;
+}
+
+.tool-box h3{
+color:cyan;
+margin-bottom:15px;
+}
+
+.tool-box input, .tool-box select{
+padding:10px;
+border-radius:8px;
+border:1px solid rgba(255,255,255,0.2);
+background:rgba(255,255,255,0.05);
+color:white;
+margin:5px 0;
+width:100%;
+max-width:300px;
+outline:none;
+}
+
+.tool-box button{
+margin-top:10px;
+padding:10px 20px;
+border:none;
+border-radius:8px;
+background:cyan;
+color:black;
+font-weight:bold;
+cursor:pointer;
+}
+
+.result{
+margin-top:15px;
+padding:12px;
+background:rgba(0,255,255,0.1);
+border-radius:8px;
+color:white;
+min-height:40px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="topbar">
+<div id="logo">NEXORA V3</div>
+<div id="clock"></div>
+</div>
+
+<div id="container">
+
+<!-- SIDEBAR -->
+<div id="sidebar">
+
+<button class="btn active" onclick="show('home')"><i class="fas fa-home"></i> Dashboard</button>
+<button class="btn" onclick="show('games')"><i class="fas fa-gamepad"></i> Juegos</button>
+<button class="btn" onclick="show('store')"><i class="fas fa-shopping-bag"></i> Enlaces</button>
+<button class="btn" onclick="show('tools')"><i class="fas fa-tools"></i> Herramientas</button>
+<button class="btn" onclick="show('calculator')"><i class="fas fa-calculator"></i> Calculadora</button>
+<button class="btn" onclick="show('converters')"><i class="fas fa-exchange-alt"></i> Convertidores</button>
+<button class="btn" onclick="show('terminal')"><i class="fas fa-terminal"></i> Terminal</button>
+<button class="btn" onclick="toggleMusic()"><i class="fas fa-music"></i> Música</button>
+
+</div>
+
+<!-- VENTANA INTERNA -->
+<div id="window-container">
+<div id="window-header">
+<h3 id="window-title">Cargando...</h3>
+<button id="window-close" onclick="closeWindow()">×</button>
+</div>
+<iframe id="window-content" src="" sandbox="allow-same-origin allow-scripts allow-popups allow-forms"></iframe>
+</div>
+
+<!-- CONTENIDO PRINCIPAL -->
+<div id="main">
+
+<!-- HOME -->
+<div id="home" class="view active">
+<h1>Bienvenido a NEXORA V3</h1>
+<p style="opacity:0.7;margin-bottom:25px;">
+Gaming Hub • Retro • Futuro • Herramientas Completas
+</p>
+
+<div class="grid">
+<div class="card"><h3>Estado</h3><p>ONLINE <i class="fas fa-circle" style="color:lime;font-size:10px;"></i></p></div>
+<div class="card"><h3>Servidor</h3><p>ESTABLE</p></div>
+<div class="card"><h3>Usuario</h3><p>VISITANTE</p></div>
+<div class="card"><h3>Rendimiento</h3><p>ÓPTIMO</p></div>
+</div>
+
+<div class="card" style="margin-top:20px;">
+<h3>📢 Noticias</h3>
+<p>✅ Se han agregado nuevos juegos y herramientas<br>✅ Los enlaces ahora se abren dentro de la misma página<br>✅ Mejoras en el diseño y velocidad</p>
+</div>
+</div>
+
+<!-- JUEGOS -->
+<div id="games" class="view">
+<h2>🎮 Juegos Integrados</h2>
+<br>
+
+<div class="grid">
+<!-- Snake -->
+<div class="card game-area">
+<h3>🐍 Snake</h3>
+<canvas id="snake" width="300" height="200"></canvas>
+<p>Usa las flechas del teclado para moverte</p>
+</div>
+
+<!-- Click Game -->
+<div class="card game-area">
+<h3>🎯 Click Rápido</h3>
+<p>Pulsa el botón lo más rápido que puedas</p>
+<div class="game-stats">
+<span>Tiempo: <span id="time">0</span>s</span>
+<span>Puntuación: <span id="score">0</span></span>
+</div>
+<button onclick="startClickGame()">¡EMPEZAR!</button>
+</div>
+
+<!-- Adivina el Número -->
+<div class="card game-area">
+<h3>🔢 Adivina el Número</h3>
+<p>He pensado un número entre 1 y 100<br>¡Intenta adivinarlo!</p>
+<input type="number" id="numInput" min="1" max="100" style="width:100%;padding:10px;margin:10px 0;border-radius:8px;border:1px solid cyan;background:rgba(255,255,255,0.05);color:white;">
+<button onclick="checkNumber()">Comprobar</button>
+<p id="numResult" style="margin-top:10px;"></p>
+</div>
+
+<!-- Memoria -->
+<div class="card game-area">
+<h3>🧠 Juego de Memoria</h3>
+<p>Recuerda los colores y repite la secuencia</p>
+<div id="memoryGrid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:15px 0;"></div>
+<button onclick="startMemoryGame()">Empezar Juego</button>
+<p id="memoryResult" style="margin-top:10px;"></p>
+</div>
+</div>
+</div>
+
+<!-- ENLACES Y TIENDA -->
+<div id="store" class="view">
+<h2>🌐 Enlaces y Recursos</h2>
+<br>
+
+<div class="store-item
+
+onclick="openWindow('Friv Games','https://www.friv.com/')">
+<h3>🎮 Friv Games</h3>
+<p>Gran colección de juegos clásicos y modernos</p>
+</div>
+
+<div class="store-item" onclick="openWindow('Y8 Games','https://www.y8.com/')">
+<h3>🎮 Y8 Games</h3>
+<p>Juegos de todo tipo, carreras, acción, aventuras</p>
+</div>
+
+<div class="store-item" onclick="openWindow('Retro Games','https://www.retrogames.cc/')">
+<h3>🕹️ Retro Games</h3>
+<p>Juegos de consolas antiguas: Nintendo, SEGA, PlayStation</p>
+</div>
+
+<div class="store-item" onclick="openWindow('Classic Reload','https://classicreload.com/')">
+<h3>💾 Classic Reload</h3>
+<p>Juegos clásicos de PC y consolas, listos para jugar</p>
+</div>
+
+<div class="store-item" onclick="openWindow('Steam','https://store.steampowered.com/')">
+<h3>🛒 Steam</h3>
+<p>Tienda oficial de juegos para PC</p>
+</div>
+
+</div>
+
+<!-- HERRAMIENTAS -->
+<div id="tools" class="view">
+<h2>🧰 Herramientas Útiles</h2>
+<br>
+
+<div class="grid">
+<div class="card">
+<h3>YouTube</h3>
+<button onclick="openWindow('YouTube','https://youtube.com')">Abrir</button>
+</div>
+
+<div class="card">
+<h3>Google</h3>
+<button onclick="openWindow('Google','https://google.com')">Abrir</button>
+</div>
+
+<div class="card">
+<h3>GitHub</h3>
+<button onclick="openWindow('GitHub','https://github.com')">Abrir</button>
+</div>
+
+<div class="card">
+<h3>Traducir Texto</h3>
+<button onclick="openWindow('Traductor','https://translate.google.com')">Abrir</button>
+</div>
+
+<div class="card">
+<h3>Calculadora Online</h3>
+<button onclick="openWindow('Calculadora Web','https://calculadoraonline.com')">Abrir</button>
+</div>
+
+<div class="card">
+<h3>Reloj Mundial</h3>
+<button onclick="openWindow('Reloj','https://time.is/es')">Abrir</button>
+</div>
+</div>
+</div>
+
+<!-- CALCULADORA -->
+<div id="calculator" class="view">
+<h2>🧮 Calculadora Completa</h2>
+
+<div class="calculator">
+<input type="text" id="calcDisplay" class="calc-display" value="0" disabled>
+<div class="calc-buttons">
+<button class="calc-btn clr" onclick="clearCalc()">C</button>
+<button class="calc-btn op" onclick="addToCalc('/')">/</button>
+<button class="calc-btn op" onclick="addToCalc('*')">×</button>
+
+<button class="calc-btn num" onclick="addToCalc('7')">7</button>
+<button class="calc-btn num" onclick="addToCalc('8')">8</button>
+<button class="calc-btn num" onclick="addToCalc('9')">9</button>
+<button class="calc-btn op" onclick="addToCalc('-')">-</button>
+
+<button class="calc-btn num" onclick="addToCalc('4')">4</button>
+<button class="calc-btn num" onclick="addToCalc('5')">5</button>
+<button class="calc-btn num" onclick="addToCalc('6')">6</button>
+<button class="calc-btn op" onclick="addToCalc('+')">+</button>
+
+<button class="calc-btn num" onclick="addToCalc('1')">1</button>
+<button class="calc-btn num" onclick="addToCalc('2')">2</button>
+<button class="calc-btn num" onclick="addToCalc('3')">3</button>
+<button class="calc-btn eq" onclick="calculate()">=</button>
+
+<button class="calc-btn num" onclick="addToCalc('0')" style="grid-column: span 2;">0</button>
+<button class="calc-btn num" onclick="addToCalc('.')">.</button>
+</div>
+</div>
+
+</div>
+
+<!-- CONVERTIDORES -->
+<div id="converters" class="view">
+<h2>🔄 Convertidores</h2>
+
+<div class="tool-box">
+<h3>📏 Longitud</h3>
+<input type="number" id="metros" placeholder="Metros">
+<button onclick="convertirLongitud()">Convertir</button>
+<div class="result" id="resLongitud"></div>
+</div>
+
+<div class="tool-box">
+<h3>⚖️ Peso</h3>
+<input type="number" id="kilos" placeholder="Kilogramos">
+<button onclick="convertirPeso()">Convertir</button>
+<div class="result" id="resPeso"></div>
+</div>
+
+<div class="tool-box">
+<h3>🌡️ Temperatura</h3>
+<input type="number" id="celsius" placeholder="°Celsius">
+<button onclick="convertirTemp()">Convertir</button>
+<div class="result" id="resTemp"></div>
+</div>
+
+</div>
+
+<!-- TERMINAL -->
+<div id="terminal" class="view">
+> Nexora V3 Sistema Iniciado<br>
+> Cargando módulos... OK<br>
+> Motor de juegos activo<br>
+> Interfaz estable<br>
+> Sistema listo para usar<br>
+<br>
+> Escribe comandos aquí:<br>
+
+<div class="terminal-input">
+<input type="text" id="cmd" placeholder="Escribe un comando...">
+<button onclick="ejecutarCmd()">Enviar</button>
+</div>
+
+</div>
+
+</div>
+</div>
+
+<audio id="music" loop>
+<source src="https://files.catbox.moe/7xqk6e.mp3">
+
+
+<script>
+
+/* ===== RELOJ ===== */
+setInterval(()=>{
+document.getElementById("clock").innerText = new Date().toLocaleTimeString();
+},1000);
+
+/* ===== NAVEGACIÓN ===== */
+function show(id){
+document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+document.querySelectorAll(".btn").forEach(b => b.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+event.currentTarget.classList.add("active");
+}
+
+/* ===== VENTANAS INTERNAS ===== */
+function openWindow(titulo, url){
+document.getElementById("window-title").innerText = titulo;
+document.getElementById("window-content").src = url;
+document.getElementById("window-container").style.display = "block";
+document.body.style.overflow = "hidden";
+}
+
+function closeWindow(){
+document.getElementById("window-container").style.display = "none";
+document.getElementById("window-content").src = "";
+}
+
+/* ===== MÚSICA ===== */
+let music = document.getElementById("music");
+function toggleMusic(){
+music.paused ? music.play() : music.pause();
+}
+
+/* ===== JUEGO: CLICK RÁPIDO ===== */
+let clickScore = 0, timeLeft = 10, gameRunning = false;
+function startClickGame(){
+if(gameRunning) return;
+gameRunning = true;
+clickScore = 0; timeLeft = 10;
+document.getElementById("score").innerText = clickScore;
+document.getElementById("time").innerText = timeLeft;
+
+let timer = setInterval(()=>{
+timeLeft--;
+document.getElementById("time").innerText = timeLeft;
+if(timeLeft <= 0){
+clearInterval(timer);
+gameRunning = false;
+alert("¡Tiempo terminado! Puntuación: " + clickScore);
+}
+}, 1000);
+}
+function clickGame(){
+if(gameRunning){
+clickScore++;
+document.getElementById("score").innerText = clickScore;
+}
+}
+
+/* ===== JUEGO: ADIVINA EL NÚMERO ===== */
+let numSecreto = Math.floor(Math.random()*100)+1;
+function checkNumber(){
+let num = parseInt(document.getElementById("numInput").value);
+let res = document.getElementById("numResult");
+if(isNaN(num)) res.innerText = "⚠️ Pon un número válido";
+else if(num < numSecreto) res.innerText = "🔼 Es mayor";
+else if(num > numSecreto) res.innerText = "🔽 Es menor";
+else {
+res.innerText = "✅ ¡Correcto! Era el " + numSecreto;
+numSecreto = Math.floor(Math.random()*100)+1;
+}
+}
+
+/* ===== JUEGO: MEMORIA ===== */
+const colores = ["red", "green", "blue", "yellow"];
+let secuencia = [], usuario = [], nivel = 1;
+function startMemoryGame(){
+secuencia = []; usuario = []; nivel = 1;
+siguienteNivel();
+}
+function siguienteNivel(){
+usuario = [];
+secuencia.push(colores[Math.floor(Math.random()*4)]);
+mostrarSecuencia();
+}
+function mostrarSecuencia(){
+let i = 0;
+let intervalo = setInterval(()=>{
+pintar(secuencia[i], "white");
+setTimeout(()=>pintar(secuencia[i], secuencia[i]), 300);
+i++;
+if(i >= secuencia.length) clearInterval(intervalo);
+}, 600);
+dibujarCuadros();
+}
+function dibujarCuadros(){
+let grid = document.getElementById("memoryGrid");
+grid.innerHTML = "";
+colores.forEach(c => {
+let div = document.createElement("div");
+div.style.background = c;
+div.style.height = "60px";
+div.style.borderRadius = "8px";
+div.onclick = () => clickColor(c);
+grid.appendChild(div);
+});
+}
+function pintar(id, color){
+let divs = document.querySelectorAll("#memoryGrid div");
+divs.forEach(d => {if(d.style.background == id) d.style.background = color;});
+}
+function clickColor(c){
+usuario.push(c);
+if(usuario[usuario.length-1] !== secuencia[usuario.length-1]){
+document.getElementById("memoryResult").innerText = "❌ Fallaste! Llegaste al nivel " + nivel;
+}else if(usuario.length === secuencia.length){
+nivel++;
+document.getElementById("memoryResult").innerText = "✅ Nivel " + nivel + " completado!";
+setTimeout(siguienteNivel, 1000);
+}
+}
+
+/* ===== JUEGO: SNAKE ===== */
+const canvas = document.getElementById("snake");
+const ctx = canvas.getContext("2d");
+let snake = [{x:150, y:100}], dir = "RIGHT", comida = nuevaComida();
+let juegoActivo = true;
+
+document.addEventListener("keydown", e => {
+if(e.key == "ArrowRight" && dir != "LEFT") dir = "RIGHT";
+else if(e.key == "ArrowLeft" && dir != "RIGHT") dir = "LEFT";
+else if(e.key == "ArrowUp" && dir != "DOWN") dir = "UP";
+else if(e.key == "ArrowDown" && dir != "UP") dir = "DOWN";
+});
+
+function nuevaComida(){
+return {
+x: Math.floor(Math.random()*(canvas.width/10)) * 10,
+y: Math.floor(Math.random()*(canvas.height/10)) * 10
+};
+}
+
+function dibujar(){
+if(!juegoActivo) return;
+ctx.fillStyle = "black";
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+ctx.fillStyle = "red";
+ctx.fillRect(comida.x, comida.y, 10, 10);
+
+ctx.fillStyle = "lime";
+snake.forEach(p => ctx.fillRect(p.x, p.y, 10, 10));
+
+let cabeza = {...snake[0]};
+if(dir == "RIGHT") cabeza.x +=10;
+if(dir == "LEFT") cabeza.x -=10;
+if(dir == "UP") cabeza.y -=10;
+if(dir == "DOWN") cabeza.y +=10;
+
+if(cabeza.x <0 || cabeza.x >= canvas.width || cabeza.y <0 || cabeza.y >= canvas.height || choca(cabeza)){
+alert("¡Game Over!"); juegoActivo = false; return;
+}
+
+snake.unshift(cabeza);
+if(cabeza.x == comida.x && cabeza.y == comida.y) comida = nuevaComida();
+else snake.pop();
+
+setTimeout(dibujar, 120);
+}
+
+function choca(cabeza){
+return snake.some(p => p.x == cabeza.x && p.y == cabeza.y);
+}
+dibujar();
+
+/* ===== CALCULADORA ===== */
+let calcVal = "0";
+function addToCalc(n){
+if(calcVal === "0") calcVal = n;
+else calcVal += n;
+document.getElementById("calcDisplay").value = calcVal;
+}
+function clearCalc(){ calcVal = "0"; document.getElementById("calcDisplay").value = calcVal; }
+function calculate(){
+try{
+let res = eval(calcVal);
+document.getElementById("calcDisplay").value = res;
+calcVal = res.toString();
+}catch{
+document.getElementById("calcDisplay").value = "Error"; calcVal = "0";
+}
+}
+
+/* ===== CONVERTIDORES ===== */
+function convertirLongitud(){
+let m = parseFloat(document.getElementById("metros").value);
+if(isNaN(m)) return;
+document.getElementById("resLongitud").innerText =
+m + " m = " + (m*100).toFixed(2) + " cm | " + (m*3.28084).toFixed(2) + " pies";
+}
+function convertirPeso(){
+let kg = parseFloat(document.getElementById("kilos").value);
+if(isNaN(kg)) return;
+document.getElementById("resPeso").innerText =
+kg + " kg = " + (kg*2.20462).toFixed(2) + " libras";
+}
+function convertirTemp(){
+let c = parseFloat(document.getElementById("celsius").value);
+if(isNaN(c)) return;
+let f = (c * 9/5) + 32;
+document.getElementById("resTemp").innerText = c + " °C = " + f.toFixed(1) + " °F";
+}
+
+/* ===== TERMINAL ===== */
+function ejecutarCmd(){
+let cmd = document.getElementById("cmd").value.toLowerCase().trim();
+let term = document.getElementById("terminal");
+term.innerHTML += "> " + cmd + "<br>";
+
+if(cmd === "ayuda") term.innerHTML += "✅ Comandos: ayuda, hora, fecha, limpiar<br>";
+else if(cmd === "hora") term.innerHTML += "🕒 " + new Date().toLocaleTimeString() + "<br>";
+else if(cmd === "fecha") term.innerHTML += "📅 " + new Date().toLocaleDateString() + "<br>";
+else if(cmd === "limpiar") term.innerHTML = "> Nexora V3 Sistema Iniciado<br>> Cargando módulos... OK<br>> Motor de juegos activo<br>> Interfaz estable<br>> Sistema listo para usar<br><br>> Escribe comandos aquí:<br>";
+else term.innerHTML += "❌ Comando no reconocido<br>";
+
+document.getElementById("cmd").value = "";
+term.scrollTop = term.scrollHeight;
+}
+
+</script>
+
+</body>
+  </html>
+  
