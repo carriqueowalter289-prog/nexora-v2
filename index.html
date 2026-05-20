@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NEXORA V2</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Orbitron',sans-serif;
+}
+
+body{
+background:#05060f;
+color:white;
+overflow:hidden;
+}
+
+/* ===== BOOT SCREEN ===== */
+
+#boot{
+position:fixed;
+width:100%;
+height:100%;
+background:black;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+z-index:9999;
+}
+
+#boot h1{
+color:cyan;
+text-shadow:0 0 20px cyan;
+font-size:40px;
+}
+
+#bar{
+width:300px;
+height:10px;
+border:1px solid cyan;
+margin-top:20px;
+}
+
+#fill{
+height:100%;
+width:0%;
+background:cyan;
+}
+
+/* ===== MAIN ===== */
+
+#app{
+display:none;
+height:100vh;
+}
+
+/* SIDEBAR */
+
+#sidebar{
+position:fixed;
+left:0;
+top:0;
+width:220px;
+height:100%;
+background:rgba(0,0,0,0.6);
+backdrop-filter:blur(10px);
+border-right:1px solid cyan;
+padding:20px;
+}
+
+#sidebar h2{
+color:cyan;
+margin-bottom:20px;
+}
+
+.btn{
+display:block;
+margin:10px 0;
+padding:10px;
+background:transparent;
+border:1px solid cyan;
+color:white;
+cursor:pointer;
+transition:0.3s;
+}
+
+.btn:hover{
+background:cyan;
+color:black;
+}
+
+/* DASHBOARD */
+
+#main{
+margin-left:220px;
+padding:20px;
+height:100vh;
+overflow:auto;
+}
+
+.card{
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(0,255,255,0.2);
+padding:15px;
+margin:10px;
+border-radius:10px;
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:10px;
+}
+
+/* TERMINAL */
+
+#terminal{
+background:black;
+padding:10px;
+height:150px;
+overflow:auto;
+color:lime;
+font-family:monospace;
+}
+
+/* GAME */
+
+canvas{
+background:black;
+border:1px solid cyan;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- BOOT -->
+
+<div id="boot">
+<h1>NEXORA V2 BOOTING</h1>
+<div id="bar"><div id="fill"></div></div>
+</div>
+
+<!-- APP -->
+
+<div id="app">
+
+<div id="sidebar">
+<h2>NEXORA</h2>
+
+<button class="btn" onclick="show('home')">Dashboard</button>
+<button class="btn" onclick="show('games')">Games</button>
+<button class="btn" onclick="show('tools')">Tools</button>
+<button class="btn" onclick="show('terminal')">Terminal</button>
+<button class="btn" onclick="toggleMusic()">Music</button>
+
+</div>
+
+<div id="main">
+
+<!-- HOME -->
+
+<div id="home">
+
+<h1>WELCOME TO NEXORA V2</h1>
+
+<div class="grid">
+
+<div class="card">Status: ONLINE</div>
+<div class="card">Security: STABLE</div>
+<div class="card">User: GUEST</div>
+<div class="card" id="clock"></div>
+
+</div>
+
+</div>
+
+<!-- GAMES -->
+
+<div id="games" style="display:none">
+
+<h2>GAMES</h2>
+
+<div class="card">
+<canvas id="game" width="300" height="200"></canvas>
+<p>Snake simple</p>
+</div>
+
+</div>
+
+<!-- TOOLS -->
+
+<div id="tools" style="display:none">
+
+<div class="card">
+<h3>Quick Links</h3>
+<button onclick="window.open('https://www.friv.com')">Friv</button>
+<button onclick="window.open('https://www.y8.com')">Y8</button>
+<button onclick="window.open('https://youtube.com')">YouTube</button>
+</div>
+
+</div>
+
+<!-- TERMINAL -->
+
+<div id="terminal" style="display:none">
+
+> Nexora system initialized<br>
+> Retro core loaded<br>
+> Security protocols active<br>
+> Welcome user<br>
+
+</div>
+
+</div>
+
+</div>
+
+<audio id="music" loop>
+<source src="https://files.catbox.moe/7xqk6e.mp3">
+</audio>
+
+<script>
+
+/* BOOT */
+
+let fill=document.getElementById("fill");
+let boot=document.getElementById("boot");
+let app=document.getElementById("app");
+
+let progress=0;
+
+let load=setInterval(()=>{
+
+progress+=2;
+fill.style.width=progress+"%";
+
+if(progress>=100){
+clearInterval(load);
+boot.style.display="none";
+app.style.display="block";
+start();
+}
+
+},30);
+
+/* NAV */
+
+function show(id){
+
+document.querySelectorAll("#main > div").forEach(d=>d.style.display="none");
+document.getElementById(id).style.display="block";
+
+}
+
+/* CLOCK */
+
+function start(){
+
+setInterval(()=>{
+
+let d=new Date();
+document.getElementById("clock").innerText=d.toLocaleTimeString();
+
+},1000);
+
+}
+
+/* MUSIC */
+
+let music=document.getElementById("music");
+
+function toggleMusic(){
+if(music.paused) music.play();
+else music.pause();
+}
+
+/* SIMPLE SNAKE */
+
+let c=document.getElementById("game");
+let ctx=c.getContext("2d");
+
+let x=10,y=10;
+
+document.addEventListener("keydown",(e)=>{
+
+if(e.key=="ArrowRight")x+=10;
+if(e.key=="ArrowLeft")x-=10;
+if(e.key=="ArrowUp")y-=10;
+if(e.key=="ArrowDown")y+=10;
+
+});
+
+function game(){
+
+ctx.fillStyle="black";
+ctx.fillRect(0,0,300,200);
+
+ctx.fillStyle="lime";
+ctx.fillRect(x,y,10,10);
+
+requestAnimationFrame(game);
+}
+
+game();
+
+</script>
+
+</body>
+</html>
